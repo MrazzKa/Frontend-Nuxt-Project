@@ -111,4 +111,6 @@
             }
         }
     )
+
+definePageMeta({middleware:'sidebase-auth'})
 </script>

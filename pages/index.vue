@@ -21,6 +21,16 @@
 
 <script setup>
 import azazelGif from '~/assets/images/Azazel.gif';
+
+definePageMeta({
+  auth: {
+    unauthenticatedOnly: false,
+    navigateAuthenticatedTo: '/',
+  },
+})
+
+const {data} = await useFetch('/api/me')
+
 </script>
 
 <style scoped>

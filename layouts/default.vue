@@ -1,19 +1,19 @@
 <template>
-  <header class="relative bg-gray-900 text-yellow-400 shadow-md z-50"> <!-- Ensure header has z-index -->
+  <header class="relative bg-gray-900 text-yellow-400 shadow-md z-50">
     <div class="flex items-center justify-between py-4 px-6">
-      <!-- Profile -->
+      <!-- Лого -->
       <div class="flex items-center gap-4">
         <img src="~/assets/images/logo game.png" class="w-32 h-auto object-contain" alt="Tima" />
         <span class="text-xl font-bold italic">The Binding of Isaac</span>
       </div>
 
-      <!-- Burger Button (Mobile) -->
+      <!-- Кнопка-бургер -->
       <button @click="switch_burger" class="sm:hidden text-yellow-400 text-3xl z-50">
         <span v-if="!burger">☰</span>
         <span v-else>✖</span>
       </button>
 
-      <!-- Navbar (Desktop) -->
+      <!-- Десктоп-меню -->
       <nav class="hidden sm:flex items-center gap-6">
         <NuxtLink to="/" class="nav-link">Home</NuxtLink>
         <div class="relative">
@@ -25,13 +25,13 @@
           </div>
         </div>
         <NuxtLink to="/login" class="nav-link">LogIn</NuxtLink>
-        <NuxtLink to="/logout" class="nav-link">LogOut</NuxtLink>
+        <div v-if="log_check" class="nav-link cursor-pointer" @click="signOut()">LogOut</div>
+        <img v-if="log_check" :src="data?.user?.image" class="w-10 h-10 rounded-full border-2 border-yellow-500" />
       </nav>
     </div>
 
-    <!-- Burger Menu (Mobile) -->
-    <div v-show="burger"
-         class="absolute top-full left-0 w-full bg-gray-900 text-yellow-400 flex flex-col items-center py-6 border-t border-yellow-500 shadow-lg z-50"> 
+    <!-- Мобильное меню -->
+    <div v-show="burger" class="absolute top-full left-0 w-full bg-gray-900 text-yellow-400 flex flex-col items-center py-6 border-t border-yellow-500 shadow-lg z-50">
       <NuxtLink to="/" class="burger-link" @click="closeMenus">Home</NuxtLink>
       <button class="burger-link" @click="switch_submenu">Labs</button>
       <div v-show="submenu" class="w-full flex flex-col">
@@ -40,11 +40,12 @@
         </NuxtLink>
       </div>
       <NuxtLink to="/login" class="burger-link" @click="closeMenus">LogIn</NuxtLink>
-      <NuxtLink to="/logout" class="burger-link" @click="closeMenus">LogOut</NuxtLink>
+      <div v-if="log_check" class="burger-link" @click="signOut()">LogOut</div>
+      <img v-if="log_check" :src="data?.user?.image" class="w-16 h-16 rounded-full mt-4 border-2 border-yellow-500" />
     </div>
   </header>
 
-  <main class="relative p-5 bg-gray-800 min-h-screen text-yellow-400 z-10"> <!-- Lower priority z-index -->
+  <main class="relative p-5 bg-gray-800 min-h-screen text-yellow-400 z-10">
     <slot />
   </main>
 
@@ -56,43 +57,45 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue'
 
-// Reactive Variables
-const burger = ref(false);
-const submenu = ref(false);
+const burger = ref(false)
+const submenu = ref(false)
 
 const switch_burger = () => {
-  burger.value = !burger.value;
-  if (!burger.value) submenu.value = false;
-};
+  burger.value = !burger.value
+  if (!burger.value) submenu.value = false
+}
 
 const switch_submenu = () => {
-  submenu.value = !submenu.value;
-};
+  submenu.value = !submenu.value
+}
 
 const closeMenus = () => {
-  burger.value = false;
-  submenu.value = false;
-};
+  burger.value = false
+  submenu.value = false
+}
 
 const labs = [
   { name: 'Lab3', path: '/Lab3' },
   { name: 'Lab4', path: '/Lab4' },
   { name: 'Lab5', path: '/Lab5' },
   { name: 'Lab6', path: '/Lab6' }
-];
+]
 
 const socialIcons = [
   { href: 'https://www.youtube.com/', img: '/youtube.png' },
   { href: 'https://www.github.com/', img: '/github.png' },
   { href: 'https://www.facebook.com/', img: '/facebook.png' }
-];
+]
 
+// Auth logic
+const { signOut, status } = useAuth()
+const log_check = computed(() => status.value === 'authenticated')
+const { data } = await useFetch('/api/me')
 </script>
 
 <style scoped>
-/* Navbar Styles */
 .nav-link {
   @apply p-2 text-yellow-400 hover:bg-yellow-500 hover:text-gray-900 rounded-lg transition;
 }
@@ -105,7 +108,6 @@ const socialIcons = [
   @apply block px-4 py-2 border-b border-yellow-500 hover:bg-yellow-500 hover:text-gray-900;
 }
 
-/* Burger Menu */
 .burger-link {
   @apply w-full text-center py-4 text-xl border-b border-yellow-500 hover:bg-yellow-500 hover:text-gray-900;
 }

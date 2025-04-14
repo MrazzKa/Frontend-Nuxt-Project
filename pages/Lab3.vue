@@ -11,6 +11,8 @@ const trailers = reactive([
   { name: "Afterbirth+", src: "/videos/Afterbirth Trailer.mp4" },
   { name: "Repentance", src: "/videos/Repentance Trailer.mp4" }
 ]);
+
+definePageMeta({middleware:'sidebase-auth'})
 </script>
 
 <template>

@@ -23,6 +23,8 @@ const selectedTrackName = computed(() => {
 watch(selectedAudio, (newVal) => {
   console.log("Selected track changed to:", newVal);
 });
+
+definePageMeta({middleware:'sidebase-auth'})
 </script>
 
 <template>
